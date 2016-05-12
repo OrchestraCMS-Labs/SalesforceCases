@@ -1,0 +1,57 @@
+<apex:page controller="CaseAttachmentUpload" standardStylesheets="false" sideBar="false" showHeader="false">
+    <head></head>
+    <body>
+        <apex:form >
+            <div><apex:inputFile value="{!fileUpload.Body}" filename="{!fileUpload.Name}" /></div>
+            <div><apex:commandButton styleclass="submitButton btn btn-default" action="{!saveAttachment}" /></div>
+        </apex:form>
+        <script>
+'use strict';
+
+window.addEventListener('load', function() {
+    if({!success}) {
+        window.parent.postMessage({
+            type: 'upload',
+            success: true
+        }, '*');
+    }
+});
+
+window.addEventListener('message', function(event) {
+    if(event.data.type == 'init') {
+        var head = document.head;
+        var body = document.body;
+        var html = document.documentElement;
+        var height;
+
+        var loadedStylesheets = 0;
+        var totalStylesheets = event.data.stylesheets.length;
+
+        document.getElementsByClassName('submitButton')[0].value = event.data.buttonText;
+
+        event.data.stylesheets.forEach(function(stylesheet) {
+            var linkElement = document.createElement('link');
+            linkElement.rel = 'stylesheet';
+            linkElement.type = 'text/css';
+            linkElement.href = stylesheet;
+
+            linkElement.addEventListener('load', function() {
+                loadedStylesheets ++;
+                if(loadedStylesheets == totalStylesheets) {
+                    height = Math.max(body.scrollHeight, body.offsetHeight,
+                        html.clientHeight, html.scrollHeight, html.offsetHeight);
+
+                    window.parent.postMessage({
+                        type: 'setHeight',
+                        height: height
+                    }, '*');
+                }
+            }, false);
+
+            head.appendChild(linkElement);
+        });
+    }
+}, false);
+        </script>
+    </body>
+</apex:page>

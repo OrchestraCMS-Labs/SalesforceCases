@@ -1,0 +1,315 @@
+<apex:page controller="cms.CreateContentController" extensions="CaseLayout"
+    showHeader="false" sidebar="false" cache="false" standardStylesheets="false">
+    <script>
+$(document).ready(init);
+
+function init() {
+    ce.content_editor('registerSaveFunction', getAttributes);
+
+    var isEnabled = ocmsEditorAPI.getEnabled();
+
+    $('#pageSize').val('{!pageSize}');
+    $('#hasStatusSelector').prop('checked', {!hasStatusSelector});
+
+    var detailUrlJson = {!IF( OR(detailUrl.LinkJSON == null,detailUrl.LinkJSON == ''),
+        'null',
+        detailUrl.LinkJSON)}
+
+    $('#detailUrl').page_selector_input({
+        input_field: 'detailUrl',
+        input_id: 'detailUrl_selector_input',
+        dialog_id: 'detailUrl_selector_dialog',
+        selected: detailUrlJson,
+        selected_name: '{!JSENCODE(detailUrl.LinkName)}'
+    });
+
+    $('#listTitle').val('{!JSENCODE(listTitle)}');
+    $('#listDescription').val('{!JSENCODE(listDescription)}');
+    $('#detailTitle').val('{!JSENCODE(detailTitle)}');
+    $('#attachmentTitle').val('{!JSENCODE(attachmentTitle)}');
+    $('#commentTitle').val('{!JSENCODE(commentTitle)}');
+
+    $('#statusLabel').val('{!JSENCODE(statusLabel)}');
+    $('#caseNumberLabel').val('{!JSENCODE(caseNumberLabel)}');
+    $('#subjectLabel').val('{!JSENCODE(subjectLabel)}');
+    $('#lastActivityLabel').val('{!JSENCODE(lastActivityLabel)}');
+    $('#caseTypeLabel').val('{!JSENCODE(caseTypeLabel)}');
+    $('#originLabel').val('{!JSENCODE(originLabel)}');
+    $('#createdDateLabel').val('{!JSENCODE(createdDateLabel)}');
+    $('#lastModifiedDateLabel').val('{!JSENCODE(lastModifiedDateLabel)}');
+    $('#descriptionLabel').val('{!JSENCODE(descriptionLabel)}');
+    $('#addCommentLabel').val('{!JSENCODE(addCommentLabel)}');
+    $('#resetCommentLabel').val('{!JSENCODE(resetCommentLabel)}');
+    $('#addAttachmentLabel').val('{!JSENCODE(addAttachmentLabel)}');
+    $('#attachmentFileNameLabel').val('{!JSENCODE(attachmentFileNameLabel)}');
+    $('#attachedByLabel').val('{!JSENCODE(attachedByLabel)}');
+    $('#attachmentCreatedDateLabel').val('{!JSENCODE(attachmentCreatedDateLabel)}');
+    $('#showMoreLabel').val('{!JSENCODE(showMoreLabel)}');
+
+    if(isEnabled) {
+        $('input, textarea').removeAttr('disabled');
+    }
+}
+
+function getAttributes() {
+    var attributes = [];
+
+    attributes.push({
+        name: 'pageSize',
+        value: $('#pageSize').val(),
+        type: 'Integer',
+        simple: true,
+        lang: ''
+    });
+
+    attributes.push({
+        name: 'hasStatusSelector',
+        value: $('#hasStatusSelector').is(':checked'),
+        type: 'Boolean',
+        simple: true,
+        lang: ''
+    });
+
+    attributes.push({
+        name: 'detailUrl',
+        value: $('#detailUrl').page_selector_input('getSerializedLink'),
+        type: 'Link',
+        lang: ''
+    });
+
+    attributes.push(createSimpleTextAttribute('listTitle'));
+    attributes.push(createSimpleTextAttribute('listDescription'));
+    attributes.push(createSimpleTextAttribute('detailTitle'));
+    attributes.push(createSimpleTextAttribute('attachmentTitle'));
+    attributes.push(createSimpleTextAttribute('commentTitle'));
+    attributes.push(createSimpleTextAttribute('statusLabel'));
+    attributes.push(createSimpleTextAttribute('caseNumberLabel'));
+    attributes.push(createSimpleTextAttribute('subjectLabel'));
+    attributes.push(createSimpleTextAttribute('lastActivityLabel'));
+    attributes.push(createSimpleTextAttribute('caseTypeLabel'));
+    attributes.push(createSimpleTextAttribute('originLabel'));
+    attributes.push(createSimpleTextAttribute('createdDateLabel'));
+    attributes.push(createSimpleTextAttribute('lastModifiedDateLabel'));
+    attributes.push(createSimpleTextAttribute('descriptionLabel'));
+    attributes.push(createSimpleTextAttribute('addCommentLabel'));
+    attributes.push(createSimpleTextAttribute('resetCommentLabel'));
+    attributes.push(createSimpleTextAttribute('addAttachmentLabel'));
+    attributes.push(createSimpleTextAttribute('attachmentFileNameLabel'));
+    attributes.push(createSimpleTextAttribute('attachedByLabel'));
+    attributes.push(createSimpleTextAttribute('attachmentCreatedDateLabel'));
+    attributes.push(createSimpleTextAttribute('showMoreLabel'));
+
+    return attributes;
+}
+
+function createSimpleTextAttribute(inputId) {
+    var $element = $('#' + inputId);
+
+    return {
+        name: inputId,
+        value: $element.val(),
+        type: 'Text',
+        simple: true
+    };
+}
+    </script>
+
+    <form>
+        <table class="ocmsContentEditor ocmsContentEditorNested">
+            <tr class="ocmsEditorSubtitle">
+                <td>Configuration</td>
+            </tr>
+            <tr>
+                <td>
+                    <label class="ocmsLabel" for="pageSize">Cases Per Page</label>
+                    <input class="ocmsTextInputLrg" type="number" id="pageSize" disabled="disabled" min="1" max="50" />
+                    <p class="ocmsHelpText">Must be between 1 and 50</p>
+                </td>
+            </tr>
+            <tr class="ocmsCheckForm">
+                <td>
+                    <ul>
+                        <li>
+                            <label class="ocmsLabel">
+                                <input type="checkbox" id="hasStatusSelector" disabled="disabled" />
+                                Include Status Selector in List view
+                            </label>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <label class="ocmsLabel">Case Detail Page</label>
+                    <div id="detailUrl"></div>
+                    <p class="ocmsHelpText">This page should have a Case Detail content template</p>
+                </td>
+            </tr>
+
+            <tr class="ocmsEditorSubtitle">
+                <td>Section Headings</td>
+            </tr>
+            <tr>
+                <td>
+                    <label class="ocmsLabel" for="listTitle">Case List Title</label>
+                    <input class="ocmsTextInputLrg" type="text" id="listTitle" disabled="disabled" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label class="ocmsLabel" for="listDescription">Case List Description</label>
+                    <textarea id="listDescription" rows="5" cols="65" disabled="disabled"></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label class="ocmsLabel" for="detailTitle">Case Detail Title</label>
+                    <input class="ocmsTextInputLrg" type="text" id="detailTitle" disabled="disabled" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label class="ocmsLabel" for="attachmentTitle">Attachments Section Title</label>
+                    <input class="ocmsTextInputLrg" type="text" id="attachmentTitle" disabled="disabled" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label class="ocmsLabel" for="commentTitle">Comments Section Title</label>
+                    <input class="ocmsTextInputLrg" type="text" id="commentTitle" disabled="disabled" />
+                </td>
+            </tr>
+
+            <tr class="ocmsEditorSubtitle">
+                <td>Labels</td>
+            </tr>
+            <tr class="ocmsTable">
+                <td>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Label Name</th>
+                                <th>Label Text</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Status</td>
+                                <td>
+                                    <input type="text" class="ocmsTextInputLrg"
+                                        id="statusLabel" disabled="disabled" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Case Number</td>
+                                <td>
+                                    <input type="text" class="ocmsTextInputLrg"
+                                        id="caseNumberLabel" disabled="disabled" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Subject</td>
+                                <td>
+                                    <input type="text" class="ocmsTextInputLrg"
+                                        id="subjectLabel" disabled="disabled" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Last Activity Date</td>
+                                <td>
+                                    <input type="text" class="ocmsTextInputLrg"
+                                        id="lastActivityLabel" disabled="disabled" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Case Type</td>
+                                <td>
+                                    <input type="text" class="ocmsTextInputLrg"
+                                        id="caseTypeLabel" disabled="disabled" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Case Origin</td>
+                                <td>
+                                    <input type="text" class="ocmsTextInputLrg"
+                                        id="originLabel" disabled="disabled" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Opened Date</td>
+                                <td>
+                                    <input type="text" class="ocmsTextInputLrg"
+                                        id="createdDateLabel" disabled="disabled" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Last Modified Date</td>
+                                <td>
+                                    <input type="text" class="ocmsTextInputLrg"
+                                        id="lastModifiedDateLabel" disabled="disabled" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Description</td>
+                                <td>
+                                    <input type="text" class="ocmsTextInputLrg"
+                                        id="descriptionLabel" disabled="disabled" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Add Comment Button</td>
+                                <td>
+                                    <input type="text" class="ocmsTextInputLrg"
+                                        id="addCommentLabel" disabled="disabled" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Cancel Adding Comment Button</td>
+                                <td>
+                                    <input type="text" class="ocmsTextInputLrg"
+                                        id="resetCommentLabel" disabled="disabled" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Add Attachment Button</td>
+                                <td>
+                                    <input type="text" class="ocmsTextInputLrg"
+                                        id="addAttachmentLabel" disabled="disabled" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Attachment File Name</td>
+                                <td>
+                                    <input type="text" class="ocmsTextInputLrg"
+                                        id="attachmentFileNameLabel" disabled="disabled" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Attached By</td>
+                                <td>
+                                    <input type="text" class="ocmsTextInputLrg"
+                                        id="attachedByLabel" disabled="disabled" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Attachment Created Date</td>
+                                <td>
+                                    <input type="text" class="ocmsTextInputLrg"
+                                        id="attachmentCreatedDateLabel" disabled="disabled" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Show More</td>
+                                <td>
+                                    <input type="text" class="ocmsTextInputLrg"
+                                        id="showMoreLabel" disabled="disabled" />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </form>
+</apex:page>
