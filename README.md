@@ -4,13 +4,13 @@
 
 1. [Summary](#summary)
     1. [Compatibility](#compatibility)
-    2. [Prerequisites](#prerequisites)
-    3. [Deployment](#deployment)
-    4. [Configuration](#configuration)
-2. [Versioning](#versioning)
+    1. [Prerequisites](#prerequisites)
+    1. [Deployment](#deployment)
+    1. [Configuration](#configuration)
+1. [Versioning](#versioning)
     1. [Major Versions](#major-versions)
-    2. [Minor Versions](#minor-versions)
-    3. [Patch Versions](#patch-versions)
+    1. [Minor Versions](#minor-versions)
+    1. [Patch Versions](#patch-versions)
 
 <!-- /MarkdownTOC -->
 
@@ -44,10 +44,16 @@ This content type requires a minimum of OrchestraCMS package 7.184 (Winter 2016,
     6. CaseList.cls
     7. CaseService.cls
     8. CaseService_Test.cls
-2. Zip the contents of resource-bundles/Case.resource and deploy the compressed file as Case.resource
+2. Deploy the following static resources
+    1. Case.resource
 3. Deploy the following Visualforce pages to the target Salesforce organization
     1. Case_Edit.page
     2. CaseAttachmentUpload.page
+
+<a href="https://githubsfdeploy.herokuapp.com">
+  <img alt="Deploy to Salesforce"
+       src="https://raw.githubusercontent.com/afawcett/githubsfdeploy/master/deploy.png">
+</a>
 
 <a name="configuration"></a>
 ### Configuration
